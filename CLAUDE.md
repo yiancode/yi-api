@@ -4,14 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-Yi-API (New API) 是一个企业级多渠道AI API网关和中继服务平台。它统一管理并转发用户请求到40+家AI服务商（OpenAI、Claude、Gemini、阿里云、百度等），提供配额管理、成本控制、渠道负载均衡等企业级功能。
+Yi-API (New API) 是一个企业级多渠道AI API网关和中继服务平台。它统一管理并转发用户请求到30+家AI服务商（OpenAI、Claude、Gemini、DeepSeek、阿里云、百度等），提供配额管理、成本控制、渠道负载均衡等企业级功能。
 
 **技术栈**:
-- 后端: Go 1.25.1 + Gin Framework
-- 前端: React + Vite + Ant Design
-- 数据库: MySQL/PostgreSQL/SQLite (支持多种数据库)
+- 后端: Go 1.25+ + Gin Framework
+- 前端: React 18 + Vite + Semi Design (抖音)
+- 数据库: MySQL/PostgreSQL/SQLite (GORM)
 - 缓存: Redis (可选) + 内存缓存
-- ORM: GORM
 
 ## 常用命令
 
@@ -64,40 +63,15 @@ make all
 
 ### Docker 部署
 
-**使用 Docker Compose (推荐)**:
+详细的 Docker 部署说明请参考 [README.md](./README.md) 或 [官方文档](https://docs.newapi.pro/installation)。
+
+**快速命令**:
 ```bash
-# 启动所有服务 (包括数据库和 Redis)
+# Docker Compose (推荐)
 docker-compose up -d
 
 # 查看日志
 docker-compose logs -f new-api
-
-# 停止服务
-docker-compose down
-
-# 重启服务
-docker-compose restart new-api
-```
-
-**单独使用 Docker**:
-```bash
-# 拉取最新镜像
-docker pull calciumion/new-api:latest
-
-# 使用 SQLite 运行
-docker run --name new-api -d --restart always \
-  -p 3000:3000 \
-  -e TZ=Asia/Shanghai \
-  -v ./data:/data \
-  calciumion/new-api:latest
-
-# 使用 MySQL 运行
-docker run --name new-api -d --restart always \
-  -p 3000:3000 \
-  -e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi" \
-  -e TZ=Asia/Shanghai \
-  -v ./data:/data \
-  calciumion/new-api:latest
 ```
 
 ### 数据库相关
@@ -157,7 +131,7 @@ docker exec -it mysql mysql -uroot -p123456 new-api
 - `logger.go` - 请求日志记录
 
 **relay/** - 中继转发层 (最复杂的模块)
-- `channel/` - 40+个渠道适配器目录 (openai/, claude/, gemini/, ali/, baidu/等)
+- `channel/` - 30+个渠道适配器目录 (openai/, claude/, gemini/, deepseek/, ali/, baidu/等)
 - `common/` - 中继公共逻辑
 - `helper/` - 辅助工具 (模型映射、价格计算、请求验证)
 - `*_handler.go` - 特定类型请求处理器:
@@ -645,6 +619,8 @@ tail -f ./logs/error.log
 
 ## 测试
 
+**注意**: 项目目前没有后端单元测试。测试主要通过以下方式进行：
+
 ### 手动测试
 
 **使用内置Playground**:
@@ -681,33 +657,13 @@ curl http://localhost:3000/v1/chat/completions \
 2. 点击某个渠道的"测试"按钮
 3. 查看测试结果和响应时间
 
-## 性能优化建议
+## 性能优化
 
-**1. 启用Redis缓存**
-```bash
-REDIS_CONN_STRING=redis://localhost:6379
-MEMORY_CACHE_ENABLED=true
-```
-
-**2. 启用批量更新**
-```bash
-BATCH_UPDATE_ENABLED=true
-```
-
-**3. 调整同步频率**
-```bash
-SYNC_FREQUENCY=60  # 减少频繁同步的开销
-```
-
-**4. 使用PostgreSQL或MySQL而非SQLite**
-- 生产环境建议使用PostgreSQL或MySQL
-- SQLite适用于小规模部署或测试环境
-
-**5. 分离日志数据库**
-```bash
-SQL_DSN=postgresql://root:123456@localhost:5432/new-api
-LOG_SQL_DSN=postgresql://root:123456@localhost:5432/new-api-logs
-```
+- 启用 Redis 缓存: `REDIS_CONN_STRING=redis://localhost:6379`
+- 启用内存缓存: `MEMORY_CACHE_ENABLED=true`
+- 启用批量更新: `BATCH_UPDATE_ENABLED=true`
+- 生产环境建议使用 PostgreSQL 或 MySQL 而非 SQLite
+- 可分离日志数据库: `LOG_SQL_DSN=...`
 
 ## 相关资源
 
