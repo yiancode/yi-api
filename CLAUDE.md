@@ -7,10 +7,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Yi-API (New API) 是一个企业级多渠道AI API网关和中继服务平台。它统一管理并转发用户请求到30+家AI服务商（OpenAI、Claude、Gemini、DeepSeek、阿里云、百度等），提供配额管理、成本控制、渠道负载均衡等企业级功能。
 
 **技术栈**:
-- 后端: Go 1.25+ + Gin Framework
+- 后端: Go 1.25.1 + Gin Framework
 - 前端: React 18 + Vite + Semi Design (抖音)
 - 数据库: MySQL/PostgreSQL/SQLite (GORM)
 - 缓存: Redis (可选) + 内存缓存
+- 模块路径: `github.com/QuantumNous/new-api`
 
 ## 常用命令
 
