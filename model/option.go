@@ -88,6 +88,16 @@ func InitOptionMap() {
 	common.OptionMap["CreemProducts"] = setting.CreemProducts
 	common.OptionMap["CreemTestMode"] = strconv.FormatBool(setting.CreemTestMode)
 	common.OptionMap["CreemWebhookSecret"] = setting.CreemWebhookSecret
+	// 微信支付配置
+	common.OptionMap["WechatAppId"] = setting.WechatAppId
+	common.OptionMap["WechatMchId"] = setting.WechatMchId
+	common.OptionMap["WechatApiV2Key"] = setting.WechatApiV2Key
+	common.OptionMap["WechatMinTopUp"] = strconv.Itoa(setting.WechatMinTopUp)
+	// 支付宝配置
+	common.OptionMap["AlipayAppId"] = setting.AlipayAppId
+	common.OptionMap["AlipayPrivateKey"] = setting.AlipayPrivateKey
+	common.OptionMap["AlipayPublicKey"] = setting.AlipayPublicKey
+	common.OptionMap["AlipayMinTopUp"] = strconv.Itoa(setting.AlipayMinTopUp)
 	common.OptionMap["TopupGroupRatio"] = common.TopupGroupRatio2JSONString()
 	common.OptionMap["Chats"] = setting.Chats2JsonString()
 	common.OptionMap["AutoGroups"] = setting.AutoGroups2JsonString()
@@ -354,6 +364,24 @@ func updateOptionMap(key string, value string) (err error) {
 		setting.CreemTestMode = value == "true"
 	case "CreemWebhookSecret":
 		setting.CreemWebhookSecret = value
+	// 微信支付配置
+	case "WechatAppId":
+		setting.WechatAppId = value
+	case "WechatMchId":
+		setting.WechatMchId = value
+	case "WechatApiV2Key":
+		setting.WechatApiV2Key = value
+	case "WechatMinTopUp":
+		setting.WechatMinTopUp, _ = strconv.Atoi(value)
+	// 支付宝配置
+	case "AlipayAppId":
+		setting.AlipayAppId = value
+	case "AlipayPrivateKey":
+		setting.AlipayPrivateKey = value
+	case "AlipayPublicKey":
+		setting.AlipayPublicKey = value
+	case "AlipayMinTopUp":
+		setting.AlipayMinTopUp, _ = strconv.Atoi(value)
 	case "TopupGroupRatio":
 		err = common.UpdateTopupGroupRatioByJSONString(value)
 	case "GitHubClientId":

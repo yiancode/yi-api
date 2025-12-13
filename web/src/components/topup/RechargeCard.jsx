@@ -53,6 +53,8 @@ const RechargeCard = ({
   enableOnlineTopUp,
   enableStripeTopUp,
   enableCreemTopUp,
+  enableWechatTopUp,
+  enableAlipayTopUp,
   creemProducts,
   creemPreTopUp,
   presetAmounts,
@@ -220,19 +222,19 @@ const RechargeCard = ({
             <div className='py-8 flex justify-center'>
               <Spin size='large' />
             </div>
-          ) : enableOnlineTopUp || enableStripeTopUp || enableCreemTopUp ? (
+          ) : enableOnlineTopUp || enableStripeTopUp || enableCreemTopUp || enableWechatTopUp || enableAlipayTopUp ? (
             <Form
               getFormApi={(api) => (onlineFormApiRef.current = api)}
               initValues={{ topUpCount: topUpCount }}
             >
               <div className='space-y-6'>
-                {(enableOnlineTopUp || enableStripeTopUp) && (
+                {(enableOnlineTopUp || enableStripeTopUp || enableWechatTopUp || enableAlipayTopUp) && (
                   <Row gutter={12}>
                     <Col xs={24} sm={24} md={24} lg={10} xl={10}>
                       <Form.InputNumber
                         field='topUpCount'
                         label={t('充值数量')}
-                        disabled={!enableOnlineTopUp && !enableStripeTopUp}
+                        disabled={!enableOnlineTopUp && !enableStripeTopUp && !enableWechatTopUp && !enableAlipayTopUp}
                         placeholder={
                           t('充值数量，最低 ') + renderQuotaWithAmount(minTopUp)
                         }
@@ -292,9 +294,13 @@ const RechargeCard = ({
                               const minTopupVal =
                                 Number(payMethod.min_topup) || 0;
                               const isStripe = payMethod.type === 'stripe';
+                              const isWechat = payMethod.type === 'wechat';
+                              const isAlipay = payMethod.type === 'alipay';
                               const disabled =
-                                (!enableOnlineTopUp && !isStripe) ||
-                                (!enableStripeTopUp && isStripe) ||
+                                (isStripe && !enableStripeTopUp) ||
+                                (isWechat && !enableWechatTopUp) ||
+                                (isAlipay && !enableAlipayTopUp) ||
+                                (!isStripe && !isWechat && !isAlipay && !enableOnlineTopUp) ||
                                 minTopupVal > Number(topUpCount || 0);
 
                               const buttonEl = (
@@ -359,7 +365,7 @@ const RechargeCard = ({
                   </Row>
                 )}
 
-                {(enableOnlineTopUp || enableStripeTopUp) && (
+                {(enableOnlineTopUp || enableStripeTopUp || enableWechatTopUp || enableAlipayTopUp) && (
                   <Form.Slot
                     label={
                       <div className='flex items-center gap-2'>

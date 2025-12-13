@@ -63,6 +63,10 @@ const TopUp = () => {
   );
   const [statusLoading, setStatusLoading] = useState(true);
 
+  // 微信支付和支付宝支付状态
+  const [enableWechatTopUp, setEnableWechatTopUp] = useState(false);
+  const [enableAlipayTopUp, setEnableAlipayTopUp] = useState(false);
+
   // Creem 相关状态
   const [creemProducts, setCreemProducts] = useState([]);
   const [enableCreemTopUp, setEnableCreemTopUp] = useState(false);
@@ -412,14 +416,22 @@ const TopUp = () => {
           const enableStripeTopUp = data.enable_stripe_topup || false;
           const enableOnlineTopUp = data.enable_online_topup || false;
           const enableCreemTopUp = data.enable_creem_topup || false;
+          const enableWechatTopUp = data.enable_wechat_topup || false;
+          const enableAlipayTopUp = data.enable_alipay_topup || false;
           const minTopUpValue = enableOnlineTopUp
             ? data.min_topup
             : enableStripeTopUp
               ? data.stripe_min_topup
-              : 1;
+              : enableWechatTopUp
+                ? data.wechat_min_topup
+                : enableAlipayTopUp
+                  ? data.alipay_min_topup
+                  : 1;
           setEnableOnlineTopUp(enableOnlineTopUp);
           setEnableStripeTopUp(enableStripeTopUp);
           setEnableCreemTopUp(enableCreemTopUp);
+          setEnableWechatTopUp(enableWechatTopUp);
+          setEnableAlipayTopUp(enableAlipayTopUp);
           setMinTopUp(minTopUpValue);
           setTopUpCount(minTopUpValue);
 
@@ -760,6 +772,8 @@ const TopUp = () => {
               enableOnlineTopUp={enableOnlineTopUp}
               enableStripeTopUp={enableStripeTopUp}
               enableCreemTopUp={enableCreemTopUp}
+              enableWechatTopUp={enableWechatTopUp}
+              enableAlipayTopUp={enableAlipayTopUp}
               creemProducts={creemProducts}
               creemPreTopUp={creemPreTopUp}
               presetAmounts={presetAmounts}
