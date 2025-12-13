@@ -48,14 +48,60 @@ func GetTopUpInfo(c *gin.Context) {
 		}
 	}
 
+	// 如果启用了微信支付，添加到支付方法列表
+	if setting.WechatMchId != "" && setting.WechatApiV2Key != "" {
+		hasWechat := false
+		for _, method := range payMethods {
+			if method["type"] == "wechat" {
+				hasWechat = true
+				break
+			}
+		}
+
+		if !hasWechat {
+			wechatMethod := map[string]string{
+				"name":      "微信支付",
+				"type":      "wechat",
+				"color":     "rgba(var(--semi-green-5), 1)",
+				"min_topup": strconv.Itoa(setting.WechatMinTopUp),
+			}
+			payMethods = append(payMethods, wechatMethod)
+		}
+	}
+
+	// 如果启用了支付宝，添加到支付方法列表
+	if setting.AlipayAppId != "" && setting.AlipayPrivateKey != "" && setting.AlipayPublicKey != "" {
+		hasAlipay := false
+		for _, method := range payMethods {
+			if method["type"] == "alipay" {
+				hasAlipay = true
+				break
+			}
+		}
+
+		if !hasAlipay {
+			alipayMethod := map[string]string{
+				"name":      "支付宝",
+				"type":      "alipay",
+				"color":     "rgba(var(--semi-blue-5), 1)",
+				"min_topup": strconv.Itoa(setting.AlipayMinTopUp),
+			}
+			payMethods = append(payMethods, alipayMethod)
+		}
+	}
+
 	data := gin.H{
 		"enable_online_topup": operation_setting.PayAddress != "" && operation_setting.EpayId != "" && operation_setting.EpayKey != "",
 		"enable_stripe_topup": setting.StripeApiSecret != "" && setting.StripeWebhookSecret != "" && setting.StripePriceId != "",
 		"enable_creem_topup":  setting.CreemApiKey != "" && setting.CreemProducts != "[]",
+		"enable_wechat_topup": setting.WechatMchId != "" && setting.WechatApiV2Key != "",
+		"enable_alipay_topup": setting.AlipayAppId != "" && setting.AlipayPrivateKey != "" && setting.AlipayPublicKey != "",
 		"creem_products":      setting.CreemProducts,
 		"pay_methods":         payMethods,
 		"min_topup":           operation_setting.MinTopUp,
 		"stripe_min_topup":    setting.StripeMinTopUp,
+		"wechat_min_topup":    setting.WechatMinTopUp,
+		"alipay_min_topup":    setting.AlipayMinTopUp,
 		"amount_options":      operation_setting.GetPaymentSetting().AmountOptions,
 		"discount":            operation_setting.GetPaymentSetting().AmountDiscount,
 	}

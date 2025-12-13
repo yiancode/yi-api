@@ -23,6 +23,8 @@ import SettingsGeneralPayment from '../../pages/Setting/Payment/SettingsGeneralP
 import SettingsPaymentGateway from '../../pages/Setting/Payment/SettingsPaymentGateway';
 import SettingsPaymentGatewayStripe from '../../pages/Setting/Payment/SettingsPaymentGatewayStripe';
 import SettingsPaymentGatewayCreem from '../../pages/Setting/Payment/SettingsPaymentGatewayCreem';
+import SettingsPaymentGatewayWechat from '../../pages/Setting/Payment/SettingsPaymentGatewayWechat';
+import SettingsPaymentGatewayAlipay from '../../pages/Setting/Payment/SettingsPaymentGatewayAlipay';
 import { API, showError, toBoolean } from '../../helpers';
 import { useTranslation } from 'react-i18next';
 
@@ -47,6 +49,16 @@ const PaymentSetting = () => {
     StripeUnitPrice: 8.0,
     StripeMinTopUp: 1,
     StripePromotionCodesEnabled: false,
+
+    WechatAppId: '',
+    WechatMchId: '',
+    WechatApiV2Key: '',
+    WechatMinTopUp: 1,
+
+    AlipayAppId: '',
+    AlipayPrivateKey: '',
+    AlipayPublicKey: '',
+    AlipayMinTopUp: 1,
   });
 
   let [loading, setLoading] = useState(false);
@@ -98,6 +110,8 @@ const PaymentSetting = () => {
           case 'MinTopUp':
           case 'StripeUnitPrice':
           case 'StripeMinTopUp':
+          case 'WechatMinTopUp':
+          case 'AlipayMinTopUp':
             newInputs[item.key] = parseFloat(item.value);
             break;
           default:
@@ -142,6 +156,12 @@ const PaymentSetting = () => {
         </Card>
         <Card style={{ marginTop: '10px' }}>
           <SettingsPaymentGatewayStripe options={inputs} refresh={onRefresh} />
+        </Card>
+        <Card style={{ marginTop: '10px' }}>
+          <SettingsPaymentGatewayWechat options={inputs} refresh={onRefresh} />
+        </Card>
+        <Card style={{ marginTop: '10px' }}>
+          <SettingsPaymentGatewayAlipay options={inputs} refresh={onRefresh} />
         </Card>
         <Card style={{ marginTop: '10px' }}>
           <SettingsPaymentGatewayCreem options={inputs} refresh={onRefresh} />

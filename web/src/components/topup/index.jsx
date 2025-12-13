@@ -147,6 +147,12 @@ const TopUp = () => {
         showError(t('管理员未开启Stripe充值！'));
         return;
       }
+    } else if (payment === 'wechat' || payment === 'alipay') {
+      // 微信和支付宝使用通用在线充值开关
+      if (!enableOnlineTopUp) {
+        showError(t('管理员未开启在线充值！'));
+        return;
+      }
     } else {
       if (!enableOnlineTopUp) {
         showError(t('管理员未开启在线充值！'));
@@ -159,6 +165,10 @@ const TopUp = () => {
     try {
       if (payment === 'stripe') {
         await getStripeAmount();
+      } else if (payment === 'wechat') {
+        await getWechatAmount();
+      } else if (payment === 'alipay') {
+        await getAlipayAmount();
       } else {
         await getAmount();
       }
@@ -181,6 +191,16 @@ const TopUp = () => {
       if (amount === 0) {
         await getStripeAmount();
       }
+    } else if (payWay === 'wechat') {
+      // 微信支付处理
+      if (amount === 0) {
+        await getWechatAmount();
+      }
+    } else if (payWay === 'alipay') {
+      // 支付宝处理
+      if (amount === 0) {
+        await getAlipayAmount();
+      }
     } else {
       // 普通支付处理
       if (amount === 0) {
@@ -201,6 +221,18 @@ const TopUp = () => {
           amount: parseInt(topUpCount),
           payment_method: 'stripe',
         });
+      } else if (payWay === 'wechat') {
+        // 微信支付请求
+        res = await API.post('/api/user/wechat/pay', {
+          amount: parseInt(topUpCount),
+          payment_method: 'wechat',
+        });
+      } else if (payWay === 'alipay') {
+        // 支付宝请求
+        res = await API.post('/api/user/alipay/pay', {
+          amount: parseInt(topUpCount),
+          payment_method: 'alipay',
+        });
       } else {
         // 普通支付请求
         res = await API.post('/api/user/pay', {
@@ -212,9 +244,11 @@ const TopUp = () => {
       if (res !== undefined) {
         const { message, data } = res.data;
         if (message === 'success') {
-          if (payWay === 'stripe') {
-            // Stripe 支付回调处理
-            window.open(data.pay_link, '_blank');
+          if (payWay === 'stripe' || payWay === 'wechat' || payWay === 'alipay') {
+            // Stripe/微信/支付宝 支付 - 打开支付链接
+            const payUrl = payWay === 'stripe' ? data.pay_link : data.pay_url;
+            window.open(payUrl, '_blank');
+            showSuccess(t('支付二维码已打开，请扫码支付'));
           } else {
             // 普通支付表单提交
             let params = data;
@@ -531,6 +565,60 @@ const TopUp = () => {
     setAmountLoading(true);
     try {
       const res = await API.post('/api/user/stripe/amount', {
+        amount: parseFloat(value),
+      });
+      if (res !== undefined) {
+        const { message, data } = res.data;
+        if (message === 'success') {
+          setAmount(parseFloat(data));
+        } else {
+          setAmount(0);
+          Toast.error({ content: '错误：' + data, id: 'getAmount' });
+        }
+      } else {
+        showError(res);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setAmountLoading(false);
+    }
+  };
+
+  const getWechatAmount = async (value) => {
+    if (value === undefined) {
+      value = topUpCount;
+    }
+    setAmountLoading(true);
+    try {
+      const res = await API.post('/api/user/wechat/amount', {
+        amount: parseFloat(value),
+      });
+      if (res !== undefined) {
+        const { message, data } = res.data;
+        if (message === 'success') {
+          setAmount(parseFloat(data));
+        } else {
+          setAmount(0);
+          Toast.error({ content: '错误：' + data, id: 'getAmount' });
+        }
+      } else {
+        showError(res);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setAmountLoading(false);
+    }
+  };
+
+  const getAlipayAmount = async (value) => {
+    if (value === undefined) {
+      value = topUpCount;
+    }
+    setAmountLoading(true);
+    try {
+      const res = await API.post('/api/user/alipay/amount', {
         amount: parseFloat(value),
       });
       if (res !== undefined) {
