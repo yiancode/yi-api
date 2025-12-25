@@ -86,13 +86,12 @@ jobs:
             done
 
             # 完成合并
-            git commit -m "🔄 自动同步上游: 解决冲突 (策略: $STRATEGY)
-
-自动同步来自 QuantumNous/new-api 的更新
-冲突解决策略: $STRATEGY
-冲突文件数: $(echo "$CONFLICT_FILES" | wc -l)
-
-🤖 由 GitHub Actions 自动执行"
+            CONFLICT_COUNT=$(echo "$CONFLICT_FILES" | wc -l)
+            git commit -m "🔄 自动同步上游: 解决冲突 (策略: $STRATEGY)" \
+              -m "自动同步来自 QuantumNous/new-api 的更新" \
+              -m "冲突解决策略: $STRATEGY" \
+              -m "冲突文件数: $CONFLICT_COUNT" \
+              -m "🤖 由 GitHub Actions 自动执行"
           fi
 
       - name: 📤 推送到 fork 仓库
