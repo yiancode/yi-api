@@ -1,0 +1,124 @@
+name: 🔄 同步上游仓库
+
+on:
+  # 每天北京时间早上 9:00 (UTC 1:00) 自动执行
+  schedule:
+    - cron: '0 1 * * *'
+
+  # 支持手动触发
+  workflow_dispatch:
+    inputs:
+      conflict_strategy:
+        description: '冲突解决策略'
+        required: true
+        default: 'theirs'
+        type: choice
+        options:
+          - theirs  # 采用上游版本
+          - ours    # 保留我们的版本
+
+jobs:
+  sync:
+    name: 同步上游代码
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ⚙️ 配置 Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 🔗 添加上游仓库
+        run: |
+          git remote add upstream https://github.com/QuantumNous/new-api.git || true
+          git fetch upstream
+
+      - name: 📊 检查更新
+        id: check
+        run: |
+          BEHIND=$(git rev-list --count HEAD..upstream/main)
+          echo "behind=$BEHIND" >> $GITHUB_OUTPUT
+          echo "📊 当前落后上游 $BEHIND 个提交"
+
+          if [ "$BEHIND" -eq 0 ]; then
+            echo "✅ 已是最新，无需同步"
+            echo "need_sync=false" >> $GITHUB_OUTPUT
+          else
+            echo "🔄 需要同步 $BEHIND 个提交"
+            echo "need_sync=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🔄 合并上游更新
+        if: steps.check.outputs.need_sync == 'true'
+        run: |
+          echo "🚀 开始合并上游代码..."
+
+          # 设置冲突解决策略
+          STRATEGY="${{ github.event.inputs.conflict_strategy || 'theirs' }}"
+          echo "📋 冲突解决策略: $STRATEGY"
+
+          # 尝试自动合并
+          if git merge upstream/main --no-edit; then
+            echo "✅ 自动合并成功，无冲突"
+          else
+            echo "⚠️ 发现冲突，应用解决策略: $STRATEGY"
+
+            # 获取冲突文件列表
+            CONFLICT_FILES=$(git diff --name-only --diff-filter=U)
+            echo "📝 冲突文件:"
+            echo "$CONFLICT_FILES"
+
+            # 解决冲突
+            for file in $CONFLICT_FILES; do
+              echo "🔧 解决冲突: $file"
+              if [ "$STRATEGY" = "theirs" ]; then
+                git checkout --theirs "$file"
+              else
+                git checkout --ours "$file"
+              fi
+              git add "$file"
+            done
+
+            # 完成合并
+            git commit -m "🔄 自动同步上游: 解决冲突 (策略: $STRATEGY)
+
+自动同步来自 QuantumNous/new-api 的更新
+冲突解决策略: $STRATEGY
+冲突文件数: $(echo "$CONFLICT_FILES" | wc -l)
+
+🤖 由 GitHub Actions 自动执行"
+          fi
+
+      - name: 📤 推送到 fork 仓库
+        if: steps.check.outputs.need_sync == 'true'
+        run: |
+          echo "📤 推送更新到 origin/main..."
+          git push origin main
+          echo "✅ 同步完成！"
+
+      - name: 📝 生成同步报告
+        if: steps.check.outputs.need_sync == 'true'
+        run: |
+          echo "## 🔄 同步报告" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ 成功同步 ${{ steps.check.outputs.behind }} 个提交" >> $GITHUB_STEP_SUMMARY
+          echo "- 📅 同步时间: $(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔧 冲突策略: ${{ github.event.inputs.conflict_strategy || 'theirs' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 最新提交" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          git log --oneline -5 >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: ℹ️ 无需同步
+        if: steps.check.outputs.need_sync == 'false'
+        run: |
+          echo "## ✅ 仓库已是最新" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "当前分支已与上游同步，无需更新。" >> $GITHUB_STEP_SUMMARY
