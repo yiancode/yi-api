@@ -9,13 +9,13 @@ on:
   workflow_dispatch:
     inputs:
       conflict_strategy:
-        description: '冲突解决策略'
+        description: '冲突解决策略 (theirs=采用上游版本, ours=保留我们的版本)'
         required: true
         default: 'theirs'
         type: choice
         options:
-          - theirs  # 采用上游版本
-          - ours    # 保留我们的版本
+          - theirs
+          - ours
 
 jobs:
   sync:
