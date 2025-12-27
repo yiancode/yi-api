@@ -24,3 +24,4 @@ web/bun.lock
 electron/node_modules
 electron/dist
 data/
+.gomodcache/
