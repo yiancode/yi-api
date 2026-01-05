@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 420) rotate(90) scale(920)">
+      <stop offset="0" stop-color="#0E1C46" />
+      <stop offset="0.55" stop-color="#070B1A" />
+      <stop offset="1" stop-color="#050612" />
+    </radialGradient>
+
+    <linearGradient id="accent" x1="320" y1="420" x2="880" y2="780" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2D69FF" />
+      <stop offset="0.48" stop-color="#45B7FF" />
+      <stop offset="1" stop-color="#9141FF" />
+    </linearGradient>
+
+    <radialGradient id="nodeCore" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 0) rotate(90) scale(92)">
+      <stop offset="0" stop-color="#0F1F4F" />
+      <stop offset="1" stop-color="#060A18" />
+    </radialGradient>
+
+    <pattern id="dots" x="0" y="0" width="72" height="72" patternUnits="userSpaceOnUse">
+      <circle cx="36" cy="36" r="3.5" fill="#2D69FF" opacity="0.22" />
+      <circle cx="12" cy="60" r="2.5" fill="#9141FF" opacity="0.18" />
+      <circle cx="60" cy="12" r="2.5" fill="#45B7FF" opacity="0.16" />
+    </pattern>
+
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.75 0"
+        result="glow"
+      />
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="halo" x="-80%" y="-80%" width="260%" height="260%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="28" result="blur" />
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.55 0"
+        result="h"
+      />
+      <feMerge>
+        <feMergeNode in="h" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="1200" fill="url(#bg)" />
+  <rect width="1200" height="1200" fill="url(#dots)" opacity="0.18" />
+
+  <!-- Mark -->
+  <g transform="translate(0 40)">
+    <!-- Infinity glow -->
+    <path
+      d="M360 560C440 420 520 420 600 560C680 700 760 700 840 560C760 420 680 420 600 560C520 700 440 700 360 560Z"
+      stroke="url(#accent)"
+      stroke-width="92"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      opacity="0.45"
+      filter="url(#softGlow)"
+    />
+    <!-- Infinity stroke -->
+    <path
+      d="M360 560C440 420 520 420 600 560C680 700 760 700 840 560C760 420 680 420 600 560C520 700 440 700 360 560Z"
+      stroke="url(#accent)"
+      stroke-width="64"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <!-- Left node -->
+    <g transform="translate(360 560)">
+      <circle r="188" fill="#BFD7FF" opacity="0.06" filter="url(#halo)" />
+      <circle r="168" fill="#FFFFFF" opacity="0.04" />
+      <circle r="144" fill="none" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="8" />
+      <circle r="114" fill="none" stroke="url(#accent)" stroke-width="54" />
+      <circle r="70" fill="url(#nodeCore)" />
+      <circle r="10.5" fill="#55AFFF" />
+    </g>
+
+    <!-- Right node -->
+    <g transform="translate(840 560)">
+      <circle r="188" fill="#BFD7FF" opacity="0.06" filter="url(#halo)" />
+      <circle r="168" fill="#FFFFFF" opacity="0.04" />
+      <circle r="144" fill="none" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="8" />
+      <circle r="114" fill="none" stroke="url(#accent)" stroke-width="54" />
+      <circle r="70" fill="url(#nodeCore)" />
+      <circle r="10.5" fill="#55AFFF" />
+    </g>
+  </g>
+</svg>

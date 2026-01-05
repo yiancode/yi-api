@@ -20,30 +20,56 @@ web/public/
     └── favicon.ico.backup
 ```
 
+### 备选方案：AI80 v2（更简洁）
+
+如需更简洁、更适合小尺寸展示的 Logo，可使用 `web/public/brand/ai80-v2/`：
+
+> 说明：v2 为**纯图形**（不含 “AI80” 与域名文字），更适合作为站点图标、头像或导航栏 Logo。
+
+```
+web/public/brand/ai80-v2/
+├── logo.svg              # 主 Logo（深色版，矢量源文件）
+├── logo-light.svg        # 浅色背景版 Logo（矢量源文件）
+├── logo.png              # 主 Logo（深色版，1200×1200）
+├── logo-light.png        # 浅色背景版 Logo（1200×1200）
+├── mark.svg              # 仅图形标（适合作为头像/图标）
+├── favicon.ico           # 多尺寸 favicon
+├── favicon-256.png       # 256×256 favicon
+└── favicon-512.png       # 512×512 favicon
+```
+
+**快速替换（可选）**：
+
+```bash
+cp web/public/brand/ai80-v2/logo.png web/public/logo.png
+cp web/public/brand/ai80-v2/logo-light.png web/public/logo-light.png
+cp web/public/brand/ai80-v2/favicon-256.png web/public/favicon-256.png
+cp web/public/brand/ai80-v2/favicon-512.png web/public/favicon-512.png
+cp web/public/brand/ai80-v2/favicon.ico web/public/favicon.ico
+```
+
 ## 🎨 设计元素说明
 
 ### 核心符号
 
 - **无限符号 (∞)** - 融合"8"的形态，象征无限的 API 接入能力
 - **双网关节点** - 两个圆形代表"0"和网关概念，体现中继功能
-- **电路纹理** - 六边形网格背景，暗示电路板和量子网络
-- **蓝紫渐变** - 从光子蓝(#2D5AFF)到量子紫(#9146FF)
+- **电路纹理** - 点阵网格背景，暗示电路板和网络拓扑
+- **蓝紫渐变** - 从光子蓝(#2D69FF)到量子紫(#9141FF)
 - **发光效果** - 多层光晕，营造能量传输视觉感受
-- **"AI80"标识** - 简洁字体标签，呼应域名 api.ai80.vip
+- **纯图形标** - 不依赖文字，适合小尺寸场景（favicon/头像/导航栏）
 
 ### 配色方案
 
 **深色背景版：**
-- 背景色：`#060A18` (深宇宙蓝)
+- 背景色：`#070B1A` (深宇宙蓝)
 - 主色调：`#2D69FF` → `#9141FF` (蓝紫渐变)
 - 节点色：`#55AFFF` (电蓝)
-- 文字色：`#CDD7F0` (柔光白)
 
 **浅色背景版：**
-- 背景色：`#F7F9FE` (纯净白蓝)
+- 背景色：`#F3F6FF` (纯净白蓝)
 - 主色调：`#1E5AE1` → `#7D32E1` (深蓝紫)
 - 节点色：`#2D7DF5` (鲜明蓝)
-- 文字色：`#141E46` (深海军蓝)
 
 ## 💻 使用场景
 

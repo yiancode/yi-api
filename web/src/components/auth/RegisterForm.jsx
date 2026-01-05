@@ -143,6 +143,10 @@ const RegisterForm = () => {
   }, []);
 
   const onWeChatLoginClicked = () => {
+    if ((hasUserAgreement || hasPrivacyPolicy) && !agreedToTerms) {
+      showInfo(t('请先阅读并同意用户协议和隐私政策'));
+      return;
+    }
     setWechatLoading(true);
     setShowWeChatLoginModal(true);
     setWechatLoading(false);
@@ -246,6 +250,10 @@ const RegisterForm = () => {
   };
 
   const handleGitHubClick = () => {
+    if ((hasUserAgreement || hasPrivacyPolicy) && !agreedToTerms) {
+      showInfo(t('请先阅读并同意用户协议和隐私政策'));
+      return;
+    }
     if (githubButtonDisabled) {
       return;
     }
@@ -268,6 +276,10 @@ const RegisterForm = () => {
   };
 
   const handleDiscordClick = () => {
+    if ((hasUserAgreement || hasPrivacyPolicy) && !agreedToTerms) {
+      showInfo(t('请先阅读并同意用户协议和隐私政策'));
+      return;
+    }
     setDiscordLoading(true);
     try {
       onDiscordOAuthClicked(status.discord_client_id, { shouldLogout: true });
@@ -277,6 +289,10 @@ const RegisterForm = () => {
   };
 
   const handleOIDCClick = () => {
+    if ((hasUserAgreement || hasPrivacyPolicy) && !agreedToTerms) {
+      showInfo(t('请先阅读并同意用户协议和隐私政策'));
+      return;
+    }
     setOidcLoading(true);
     try {
       onOIDCClicked(
@@ -291,6 +307,10 @@ const RegisterForm = () => {
   };
 
   const handleLinuxDOClick = () => {
+    if ((hasUserAgreement || hasPrivacyPolicy) && !agreedToTerms) {
+      showInfo(t('请先阅读并同意用户协议和隐私政策'));
+      return;
+    }
     setLinuxdoLoading(true);
     try {
       onLinuxDOOAuthClicked(status.linuxdo_client_id, { shouldLogout: true });
@@ -312,6 +332,10 @@ const RegisterForm = () => {
   };
 
   const onTelegramLoginClicked = async (response) => {
+    if ((hasUserAgreement || hasPrivacyPolicy) && !agreedToTerms) {
+      showInfo(t('请先阅读并同意用户协议和隐私政策'));
+      return;
+    }
     const fields = [
       'id',
       'first_name',
@@ -465,6 +489,44 @@ const RegisterForm = () => {
                   <span className='ml-3'>{t('使用 用户名 注册')}</span>
                 </Button>
               </div>
+
+              {(hasUserAgreement || hasPrivacyPolicy) && (
+                <div className='mt-6'>
+                  <Checkbox
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  >
+                    <Text size='small' className='text-gray-600'>
+                      {t('我已阅读并同意')}
+                      {hasUserAgreement && (
+                        <>
+                          <a
+                            href='/user-agreement'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='text-blue-600 hover:text-blue-800 mx-1'
+                          >
+                            {t('用户协议')}
+                          </a>
+                        </>
+                      )}
+                      {hasUserAgreement && hasPrivacyPolicy && t('和')}
+                      {hasPrivacyPolicy && (
+                        <>
+                          <a
+                            href='/privacy-policy'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='text-blue-600 hover:text-blue-800 mx-1'
+                          >
+                            {t('隐私政策')}
+                          </a>
+                        </>
+                      )}
+                    </Text>
+                  </Checkbox>
+                </div>
+              )}
 
               <div className='mt-6 text-center text-sm'>
                 <Text>
