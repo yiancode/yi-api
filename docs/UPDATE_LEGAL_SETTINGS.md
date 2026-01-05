@@ -6,7 +6,7 @@
 
 ### 步骤：
 
-1. 登录管理后台 https://api.ai80.vip
+1. 登录管理后台 https://your-domain.com
 2. 进入"设置" → "系统设置"
 3. 找到"法律文档"部分
 4. 更新以下两个字段：
@@ -59,7 +59,7 @@ cat > /tmp/legal_update.json << 'EOF'
 EOF
 
 # 发送更新请求
-curl -X PUT https://api.ai80.vip/api/option \
+curl -X PUT https://your-domain.com/api/option \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
   -d @/tmp/legal_update.json
@@ -69,14 +69,14 @@ curl -X PUT https://api.ai80.vip/api/option \
 
 更新后，访问以下链接验证：
 
-- 隐私政策: https://api.ai80.vip/privacy
-- 服务条款: https://api.ai80.vip/user-agreement
+- 隐私政策: https://your-domain.com/privacy
+- 服务条款: https://your-domain.com/user-agreement
 
 ## 注意事项
 
 1. 更新后需要重启服务使配置生效（如果使用数据库直接更新）
 2. 确保备份原有配置
-3. 客户支持邮箱已设置为: yian20133213@gmail.com
+3. 客户支持邮箱已设置为: your-email@example.com
 
 ## 完整文档内容
 

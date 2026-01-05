@@ -17,7 +17,7 @@
 - ✅ 修改了 Footer 组件（`web/src/components/layout/Footer.jsx`）
   - 添加了"隐私政策"链接：`/privacy`
   - 添加了"服务条款"链接：`/user-agreement`
-  - 添加了"客户支持"邮箱链接：`mailto:yian20133213@gmail.com`
+  - 添加了"客户支持"邮箱链接：`mailto:your-email@example.com`
 
 - ✅ 前端已构建（`bun run build` 成功）
 
@@ -30,7 +30,7 @@
 ### 步骤 1：更新数据库配置（添加隐私政策和服务条款）
 
 **方法 A - 通过管理后台（推荐）：**
-1. 登录 https://api.ai80.vip 管理后台
+1. 登录 https://your-domain.com 管理后台
 2. 进入"设置" → "系统设置"（可能需要添加此设置页面）
 3. 找到"法律文档"配置
 4. 粘贴 `docs/privacy_policy.md` 内容到"隐私政策"字段
@@ -40,7 +40,7 @@
 **方法 B - 通过 SSH 直接更新数据库：**
 ```bash
 # 1. 连接到服务器
-ssh root@106.53.117.99
+ssh root@YOUR_SERVER_IP
 
 # 2. 找到数据库容器或直接连接数据库
 # 如果使用 Docker:
@@ -70,8 +70,8 @@ bun run build
 
 # 部署到服务器
 # 方法 1：使用 rsync（需要先在服务器创建目录）
-ssh root@106.53.117.99 "mkdir -p /root/yi-api/web"
-rsync -avz --delete dist/ root@106.53.117.99:/root/yi-api/web/dist/
+ssh root@YOUR_SERVER_IP "mkdir -p /your/deploy/path/web"
+rsync -avz --delete dist/ root@YOUR_SERVER_IP:/your/deploy/path/web/dist/
 
 # 方法 2：通过 Git 推送并在服务器拉取
 cd ..
@@ -79,8 +79,8 @@ git add -A
 git commit -m "feat: 添加隐私政策、服务条款和客户支持邮箱以满足 Creem 合规要求"
 git push
 # 然后在服务器上：
-ssh root@106.53.117.99
-cd /root/yi-api
+ssh root@YOUR_SERVER_IP
+cd /your/deploy/path
 git pull
 cd web && bun run build
 ```
@@ -89,36 +89,36 @@ cd web && bun run build
 
 ```bash
 # 在服务器上
-ssh root@106.53.117.99
+ssh root@YOUR_SERVER_IP
 
 # 如果使用 systemd
 systemctl restart new-api
 
 # 如果使用 docker-compose
-cd /root/yi-api && docker-compose restart new-api
+cd /your/deploy/path && docker-compose restart new-api
 
 # 如果直接运行
 pkill -f new-api
-cd /root/yi-api && nohup ./new-api > /dev/null 2>&1 &
+cd /your/deploy/path && nohup ./new-api > /dev/null 2>&1 &
 ```
 
 ### 步骤 4：验证部署
 
 1. **验证前端更新：**
-   - 访问 https://api.ai80.vip
+   - 访问 https://your-domain.com
    - 滚动到页脚，确认显示以下链接：
      - ✅ 隐私政策
      - ✅ 服务条款
      - ✅ 客户支持（邮箱）
 
 2. **验证法律文档可访问：**
-   - 访问 https://api.ai80.vip/privacy
-   - 访问 https://api.ai80.vip/user-agreement
+   - 访问 https://your-domain.com/privacy
+   - 访问 https://your-domain.com/user-agreement
    - 确认内容正确显示
 
 3. **验证客户支持邮箱：**
    - 点击页脚的"客户支持"链接
-   - 确认打开邮件客户端，收件人为：yian20133213@gmail.com
+   - 确认打开邮件客户端，收件人为：your-email@example.com
 
 ### 步骤 5：回复 Creem 团队
 
@@ -135,13 +135,13 @@ cd /root/yi-api && nohup ./new-api > /dev/null 2>&1 &
 
 1. **网站页脚截图**
    - 显示"隐私政策"、"服务条款"、"客户支持"链接
-   - URL: https://api.ai80.vip
+   - URL: https://your-domain.com
 
 2. **隐私政策页面截图**
-   - URL: https://api.ai80.vip/privacy
+   - URL: https://your-domain.com/privacy
 
 3. **服务条款页面截图**
-   - URL: https://api.ai80.vip/user-agreement
+   - URL: https://your-domain.com/user-agreement
 
 ## 🔍 故障排查
 
