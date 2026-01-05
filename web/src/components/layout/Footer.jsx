@@ -189,10 +189,32 @@ const FooterBar = () => {
         )}
 
         <div className='flex flex-col md:flex-row items-center justify-between w-full max-w-[1110px] gap-6'>
-          <div className='flex flex-wrap items-center gap-2'>
+          <div className='flex flex-col md:flex-row flex-wrap items-center gap-2 md:gap-4'>
             <Typography.Text className='text-sm !text-semi-color-text-1'>
               © {currentYear} {systemName}. {t('版权所有')}
             </Typography.Text>
+            <div className='flex flex-wrap items-center gap-2 md:gap-4 text-sm'>
+              <a
+                href='/privacy'
+                className='!text-semi-color-text-1 hover:!text-semi-color-primary'
+              >
+                {t('隐私政策')}
+              </a>
+              <span className='!text-semi-color-text-2'>•</span>
+              <a
+                href='/user-agreement'
+                className='!text-semi-color-text-1 hover:!text-semi-color-primary'
+              >
+                {t('服务条款')}
+              </a>
+              <span className='!text-semi-color-text-2'>•</span>
+              <a
+                href='mailto:yian20133213@gmail.com'
+                className='!text-semi-color-text-1 hover:!text-semi-color-primary'
+              >
+                {t('客户支持')}
+              </a>
+            </div>
           </div>
 
           <div className='text-sm'>
