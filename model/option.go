@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -174,6 +175,8 @@ func loadOptionsFromDatabase() {
 			common.SysLog("failed to update option map: " + err.Error())
 		}
 	}
+	// 调试日志：检查微信支付配置是否正确加载
+	common.SysLog(fmt.Sprintf("DEBUG: After sync - WechatMchId=%s, WechatApiV2Key length=%d", setting.WechatMchId, len(setting.WechatApiV2Key)))
 }
 
 func SyncOptions(frequency int) {

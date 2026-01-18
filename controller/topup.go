@@ -90,6 +90,9 @@ func GetTopUpInfo(c *gin.Context) {
 		}
 	}
 
+	// 调试日志
+	common.SysLog(fmt.Sprintf("GetTopUpInfo: WechatMchId=%s, WechatApiV2Key length=%d", setting.WechatMchId, len(setting.WechatApiV2Key)))
+
 	data := gin.H{
 		"enable_online_topup": operation_setting.PayAddress != "" && operation_setting.EpayId != "" && operation_setting.EpayKey != "",
 		"enable_stripe_topup": setting.StripeApiSecret != "" && setting.StripeWebhookSecret != "" && setting.StripePriceId != "",
