@@ -38,6 +38,7 @@ import InvitationCard from './InvitationCard';
 import TransferModal from './modals/TransferModal';
 import PaymentConfirmModal from './modals/PaymentConfirmModal';
 import TopupHistoryModal from './modals/TopupHistoryModal';
+import QRCodePaymentModal from './modals/QRCodePaymentModal';
 
 const TopUp = () => {
   const { t } = useTranslation();
@@ -90,6 +91,11 @@ const TopUp = () => {
 
   // 账单Modal状态
   const [openHistory, setOpenHistory] = useState(false);
+
+  // 二维码支付Modal状态
+  const [qrCodeModalVisible, setQrCodeModalVisible] = useState(false);
+  const [qrCodePayUrl, setQrCodePayUrl] = useState('');
+  const [qrCodeOrderId, setQrCodeOrderId] = useState('');
 
   // 预设充值额度选项
   const [presetAmounts, setPresetAmounts] = useState([]);
@@ -252,11 +258,15 @@ const TopUp = () => {
       if (res !== undefined) {
         const { message, data } = res.data;
         if (message === 'success') {
-          if (payWay === 'stripe' || payWay === 'wechat' || payWay === 'wxpay' || payWay === 'alipay') {
-            // Stripe/微信/支付宝 支付 - 打开支付链接
-            const payUrl = payWay === 'stripe' ? data.pay_link : data.pay_url;
-            window.open(payUrl, '_blank');
-            showSuccess(t('支付二维码已打开，请扫码支付'));
+          if (payWay === 'stripe') {
+            // Stripe 支付 - 打开支付链接
+            window.open(data.pay_link, '_blank');
+            showSuccess(t('Stripe支付页面已打开'));
+          } else if (payWay === 'wechat' || payWay === 'wxpay' || payWay === 'alipay') {
+            // 微信/支付宝 - 显示二维码模态框
+            setQrCodePayUrl(data.pay_url);
+            setQrCodeOrderId(data.order_id || '');
+            setQrCodeModalVisible(true);
           } else {
             // 普通支付表单提交
             let params = data;
@@ -765,6 +775,25 @@ const TopUp = () => {
           </>
         )}
       </Modal>
+
+      {/* 二维码支付模态框 */}
+      <QRCodePaymentModal
+        t={t}
+        visible={qrCodeModalVisible}
+        onCancel={() => {
+          setQrCodeModalVisible(false);
+          setQrCodePayUrl('');
+          setQrCodeOrderId('');
+        }}
+        payUrl={qrCodePayUrl}
+        payWay={payWay}
+        amount={amount}
+        orderId={qrCodeOrderId}
+        onPaymentSuccess={() => {
+          // 支付成功后刷新用户配额
+          getUserQuota();
+        }}
+      />
 
       {/* 用户信息头部 */}
       <div className='space-y-6'>

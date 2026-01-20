@@ -439,3 +439,32 @@ func AdminCompleteTopUp(c *gin.Context) {
 	}
 	common.ApiSuccess(c, nil)
 }
+
+// GetTopUpStatus 查询订单支付状态
+func GetTopUpStatus(c *gin.Context) {
+	orderId := c.Query("order_id")
+	if orderId == "" {
+		c.JSON(200, gin.H{"message": "error", "data": "订单号不能为空"})
+		return
+	}
+
+	userId := c.GetInt("id")
+	topUp := model.GetTopUpByTradeNo(orderId)
+	if topUp == nil {
+		c.JSON(200, gin.H{"message": "error", "data": "订单不存在"})
+		return
+	}
+
+	// 验证订单所属用户
+	if topUp.UserId != userId {
+		c.JSON(200, gin.H{"message": "error", "data": "无权访问此订单"})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "success",
+		"data": gin.H{
+			"status": topUp.Status,
+		},
+	})
+}

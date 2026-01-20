@@ -104,9 +104,10 @@ func RequestWechatPay(c *gin.Context) {
 	// 转换为分
 	totalFee := int(payMoney * 100)
 
-	// 生成订单号
+	// 生成订单号（微信支付要求out_trade_no最长32字符）
 	reference := fmt.Sprintf("wechat-ref-%d-%d-%s", user.Id, time.Now().UnixMilli(), randstr.String(4))
-	referenceId := "ref_" + common.Sha1([]byte(reference))
+	sha1Hash := common.Sha1([]byte(reference))
+	referenceId := "wx_" + sha1Hash[:29] // "wx_" + 29位 = 32字符
 
 	// 创建订单记录
 	amount := req.Amount
@@ -285,7 +286,15 @@ func WechatNotifyHandler(c *gin.Context) {
 
 	// 验签
 	if !verifyWechatSign(params, setting.WechatApiV2Key) {
-		log.Printf("微信回调签名验证失败")
+		log.Printf("微信回调签名验证失败 - 订单号: %s, 收到的签名: %s", params["out_trade_no"], params["sign"])
+		// 输出所有参数用于调试（生产环境应该移除敏感信息）
+		var paramKeys []string
+		for k := range params {
+			if k != "sign" {
+				paramKeys = append(paramKeys, k)
+			}
+		}
+		log.Printf("微信回调参数: %v", paramKeys)
 		wechatNotifyResponse(c, "FAIL", "签名验证失败")
 		return
 	}
