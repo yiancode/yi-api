@@ -262,7 +262,7 @@ func WechatNotifyHandler(c *gin.Context) {
 		return
 	}
 
-	// 将XML解析为map用于签名验证
+	// 将XML解析为map用于签名验证（需要包含所有字段）
 	params := make(map[string]string)
 	decoder := xml.NewDecoder(strings.NewReader(string(body)))
 	for {
@@ -277,6 +277,11 @@ func WechatNotifyHandler(c *gin.Context) {
 		}
 
 		if se, ok := token.(xml.StartElement); ok {
+			// 跳过根元素xml
+			if se.Name.Local == "xml" {
+				continue
+			}
+
 			var value string
 			if err := decoder.DecodeElement(&value, &se); err == nil {
 				params[se.Name.Local] = value
